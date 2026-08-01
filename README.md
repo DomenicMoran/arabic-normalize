@@ -28,8 +28,7 @@ weit die Gleichmacherei gehen darf.
 ## Installation
 
 ```bash
-# Not on npm yet. Install straight from the repository:
-npm install github:DomenicMoran/arabic-normalize
+npm install arabic-normalize
 ```
 
 Keine Abhängigkeiten. ESM. TypeScript-Typen enthalten.
