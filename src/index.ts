@@ -1,9 +1,9 @@
 /**
- * Normalisierung arabischer Schrift für den *Vergleich* — nicht für die Anzeige.
+ * Normalisierung arabischer Schrift für den *Vergleich*: nicht für die Anzeige.
  *
  * Der Anlass: Spracherkennung auf klassisch-arabischem Text. Ein Modell gibt
  * `ی` (Farsi Yeh) aus, die Vorlage enthält `ي` (Arabic Yeh). Für das Ohr
- * identisch, für `===` zwei verschiedene Zeichen — und die Trefferquote bricht
+ * identisch, für `===` zwei verschiedene Zeichen: und die Trefferquote bricht
  * ein, obwohl korrekt gesprochen wurde.
  *
  * Diese Bibliothek räumt genau solche Unterschiede weg, und zwar in Stufen,
@@ -109,7 +109,7 @@ export function normalizeArabic(input: string, options: NormalizeOptions = {}): 
  * Wichtig gegenüber `split(/\s+/)`: Zeichen, die *allein* stehen (etwa
  * Waqf-Marker in manchen Uthmani-Ausgaben), werden nach der Normalisierung zu
  * leeren Zeichenketten. Bleiben die im Array, verschiebt sich jeder folgende
- * Wortindex — und damit zum Beispiel jede Wort-Zeitmarke einer Audiospur.
+ * Wortindex: und damit zum Beispiel jede Wort-Zeitmarke einer Audiospur.
  */
 export function tokenize(input: string, options?: NormalizeOptions): string[] {
   return normalizeArabic(input, options)
@@ -122,7 +122,7 @@ export function tokenize(input: string, options?: NormalizeOptions): string[] {
  *
  * Bewusst mild: Verglichen wird über die Levenshtein-Distanz der Wortfolgen,
  * nicht über exakte Gleichheit. Ein einzelnes abweichendes Wort in einem langen
- * Vers soll das Ergebnis nicht auf null ziehen — bei Rezitationsprüfung ist ein
+ * Vers soll das Ergebnis nicht auf null ziehen: bei Rezitationsprüfung ist ein
  * strenger Vergleich für Lernende unbrauchbar.
  */
 export function similarity(a: string, b: string, options?: NormalizeOptions): number {
@@ -132,7 +132,7 @@ export function similarity(a: string, b: string, options?: NormalizeOptions): nu
   if (left.length === 0 && right.length === 0) return 1;
   if (left.length === 0 || right.length === 0) return 0;
 
-  // Zeilenweise Levenshtein — nur zwei Zeilen im Speicher.
+  // Zeilenweise Levenshtein: nur zwei Zeilen im Speicher.
   let prev = Array.from({ length: right.length + 1 }, (_, i) => i);
   let curr = new Array<number>(right.length + 1);
 
