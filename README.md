@@ -1,6 +1,6 @@
 # arabic-normalize
 
-**Normalisierung arabischer Schrift für den Vergleich — nicht für die Anzeige.**
+**Normalisierung arabischer Schrift für den Vergleich, nicht für die Anzeige.**
 
 [![CI](https://github.com/DomenicMoran/arabic-normalize/actions/workflows/ci.yml/badge.svg)](https://github.com/DomenicMoran/arabic-normalize/actions/workflows/ci.yml)
 ![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178c6)
@@ -11,7 +11,7 @@
 ## Das Problem
 
 Ein Spracherkennungsmodell gibt `علی` aus. Die Vorlage enthält `علي`. Für das
-Ohr identisch — für `===` zwei verschiedene Zeichenketten. Die Trefferquote
+Ohr identisch: für `===` zwei verschiedene Zeichenketten. Die Trefferquote
 bricht ein, obwohl der Sprecher korrekt gesprochen hat.
 
 Dasselbe passiert mit Vokalzeichen (`بِسْمِ` vs. `بسم`), mit koranischen
@@ -19,7 +19,7 @@ Pausenzeichen, mit Alef-Varianten (`آ أ إ ٱ`), mit Urdu-Heh, mit Tatweel und
 arabisch-indischen Ziffern. Jede dieser Abweichungen ist für einen Menschen
 unsichtbar und für einen Vergleich fatal.
 
-Diese Bibliothek räumt sie weg — in Stufen, damit man selbst entscheidet, wie
+Diese Bibliothek räumt sie weg: in Stufen, damit man selbst entscheidet, wie
 weit die Gleichmacherei gehen darf.
 
 > **Nur zum Vergleichen.** Der normalisierte Text ist bewusst nicht mehr
@@ -67,13 +67,13 @@ Gleichheit. Ein einzelnes abweichendes Wort in einem langen Vers zieht das
 Ergebnis nicht auf null.
 
 Das ist eine Produktentscheidung, keine mathematische: Bei einer
-Rezitationsprüfung ist ein strenger Vergleich für Lernende unbrauchbar — er
+Rezitationsprüfung ist ein strenger Vergleich für Lernende unbrauchbar: er
 sagt nur „falsch", nie „fast".
 
 ## Die Falle, die `tokenize` löst
 
 Naives `split(/\s+/)` bricht bei koranischem Uthmani-Text. Manche Ausgaben
-enthalten **allein stehende** Waqf-Marker — ein Pausenzeichen mit Leerzeichen
+enthalten **allein stehende** Waqf-Marker: ein Pausenzeichen mit Leerzeichen
 davor und dahinter. Nach dem Entfernen bleibt eine leere Zeichenkette im Array
 zurück und verschiebt **jeden folgenden Wortindex um eins**.
 
@@ -105,9 +105,9 @@ tokenize("الحمد ۖ لله");      // → ["الحمد", "لله"]
 
 Bewusst festgelegt und nicht beliebig:
 
-1. **NFC** — Unicode-Komposition vereinheitlichen
-2. **Marker entfernen** — koranische Zeichen, dann Vokalzeichen, dann Tatweel
-3. **Buchstaben abbilden** — regionale Varianten
+1. **NFC**: Unicode-Komposition vereinheitlichen
+2. **Marker entfernen**: koranische Zeichen, dann Vokalzeichen, dann Tatweel
+3. **Buchstaben abbilden**: regionale Varianten
 4. **Ziffern**, dann **Leerraum**
 
 Andersherum überleben Kombinationen, die nach dem Buchstaben-Mapping nicht mehr

@@ -1,7 +1,7 @@
 {
   "name": "arabic-normalize",
   "version": "1.0.0",
-  "description": "Normalisierung arabischer Schrift fuer den Vergleich: Vokalzeichen, koranische Marker, persische und Urdu-Buchstabenvarianten.",
+  "description": "Normalisierung arabischer Schrift für den Vergleich: Vokalzeichen, koranische Marker, persische und Urdu-Buchstabenvarianten.",
   "keywords": ["arabic", "normalization", "quran", "persian", "urdu", "text-comparison", "nlp"],
   "license": "MIT",
   "author": "Domenic Moran",

@@ -68,7 +68,7 @@ describe("tokenize", () => {
   });
 
   it("erzeugt keine leeren Einträge aus allein stehenden Markern", () => {
-    // Der Marker steht als eigenes "Wort" — nach dem Entfernen bliebe sonst
+    // Der Marker steht als eigenes "Wort": nach dem Entfernen bliebe sonst
     // eine leere Zeichenkette und würde jeden folgenden Index verschieben.
     const tokens = tokenize("الحمد ۖ لله");
     expect(tokens).toEqual(["الحمد", "لله"]);
