@@ -1,7 +1,7 @@
 {
   "name": "arabic-normalize",
-  "version": "1.0.0",
-  "description": "Normalisierung arabischer Schrift für den Vergleich: Vokalzeichen, koranische Marker, persische und Urdu-Buchstabenvarianten.",
+  "version": "1.0.1",
+  "description": "Normalise Arabic script for comparison: diacritics, Quranic pause marks, Persian and Urdu letter variants. Zero dependencies.",
   "keywords": [
     "arabic",
     "normalization",

@@ -1,6 +1,6 @@
 # arabic-normalize
 
-**Normalisierung arabischer Schrift für den Vergleich, nicht für die Anzeige.**
+**Normalise Arabic script for comparison, not for display.**
 
 [![CI](https://github.com/DomenicMoran/arabic-normalize/actions/workflows/ci.yml/badge.svg)](https://github.com/DomenicMoran/arabic-normalize/actions/workflows/ci.yml)
 ![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178c6)
@@ -8,32 +8,32 @@
 
 ---
 
-## Das Problem
+## The problem
 
-Ein Spracherkennungsmodell gibt `علی` aus. Die Vorlage enthält `علي`. Für das
-Ohr identisch: für `===` zwei verschiedene Zeichenketten. Die Trefferquote
-bricht ein, obwohl der Sprecher korrekt gesprochen hat.
+A speech model returns `علی`. The source has `علي`. Identical to the ear — two
+different strings to `===`. The match rate collapses although the speaker was
+right.
 
-Dasselbe passiert mit Vokalzeichen (`بِسْمِ` vs. `بسم`), mit koranischen
-Pausenzeichen, mit Alef-Varianten (`آ أ إ ٱ`), mit Urdu-Heh, mit Tatweel und mit
-arabisch-indischen Ziffern. Jede dieser Abweichungen ist für einen Menschen
-unsichtbar und für einen Vergleich fatal.
+The same happens with harakat (`بِسْمِ` vs. `بسم`), with Quranic pause marks,
+with Alef variants (`آ أ إ ٱ`), with Urdu Heh, with tatweel and with
+Arabic-Indic digits. Every one of these differences is invisible to a human and
+fatal to a comparison.
 
-Diese Bibliothek räumt sie weg: in Stufen, damit man selbst entscheidet, wie
-weit die Gleichmacherei gehen darf.
+This library clears them away in stages, so you decide how far the levelling
+is allowed to go.
 
-> **Nur zum Vergleichen.** Der normalisierte Text ist bewusst nicht mehr
-> korrekt gesetzt. Angezeigt wird immer das Original.
+> **For comparison only.** The normalised text is deliberately no longer
+> correctly typeset. What you display is always the original.
 
-## Installation
+## Install
 
 ```bash
 npm install arabic-normalize
 ```
 
-Keine Abhängigkeiten. ESM. TypeScript-Typen enthalten.
+No dependencies. ESM. TypeScript types included.
 
-## Benutzung
+## Usage
 
 ```ts
 import { normalizeArabic, tokenize, similarity, equals } from "arabic-normalize";
@@ -46,82 +46,81 @@ similarity("الحمد لله رب العالمين",
            "الحمد لله رب الناس");    // → 0.75
 ```
 
-### Optionen
+### Options
 
-Jede Stufe lässt sich einzeln abschalten:
+Every stage can be switched off on its own:
 
 ```ts
 normalizeArabic(text, {
-  stripHarakat: true,       // Vokalzeichen entfernen
-  stripQuranicMarks: true,  // Rezitations- und Pausenzeichen (U+06D6–U+06ED)
-  unifyLetters: true,       // regionale Varianten vereinheitlichen
-  normalizeDigits: true,    // ٠-٩ und ۰-۹ nach ASCII
-  collapseWhitespace: true, // Mehrfach-Leerraum zusammenfassen
+  stripHarakat: true,       // remove vowel marks
+  stripQuranicMarks: true,  // recitation and pause marks (U+06D6–U+06ED)
+  unifyLetters: true,       // unify regional variants
+  normalizeDigits: true,    // ٠-٩ and ۰-۹ to ASCII
+  collapseWhitespace: true, // collapse runs of whitespace
 });
 ```
 
-## Warum `similarity` mild bewertet
+## Why `similarity` scores leniently
 
-Verglichen wird die Levenshtein-Distanz der **Wortfolgen**, nicht exakte
-Gleichheit. Ein einzelnes abweichendes Wort in einem langen Vers zieht das
-Ergebnis nicht auf null.
+It compares the Levenshtein distance of **word sequences**, not exact equality.
+A single differing word in a long verse does not drag the result to zero.
 
-Das ist eine Produktentscheidung, keine mathematische: Bei einer
-Rezitationsprüfung ist ein strenger Vergleich für Lernende unbrauchbar: er
-sagt nur „falsch", nie „fast".
+That is a product decision, not a mathematical one: in a recitation check a
+strict comparison is useless to a learner — it only ever says "wrong", never
+"almost".
 
-## Die Falle, die `tokenize` löst
+## The trap `tokenize` solves
 
-Naives `split(/\s+/)` bricht bei koranischem Uthmani-Text. Manche Ausgaben
-enthalten **allein stehende** Waqf-Marker: ein Pausenzeichen mit Leerzeichen
-davor und dahinter. Nach dem Entfernen bleibt eine leere Zeichenkette im Array
-zurück und verschiebt **jeden folgenden Wortindex um eins**.
+A naive `split(/\s+/)` breaks on Quranic Uthmani text. Some editions carry
+**free-standing** waqf markers: a pause mark with a space on either side. Strip
+the mark and an empty string is left in the array, shifting **every following
+word index by one**.
 
-Was daran hängt: Wort-Zeitmarken für Audio-Synchronisierung, Hervorhebung des
-aktuellen Wortes, jede Zuordnung zwischen Text und Ton. Der Fehler ist
-unsichtbar, bis die Markierung mitten im Vers auseinanderläuft.
+What hangs off that: word-level timestamps for audio sync, highlighting the
+current word, every mapping between text and sound. The defect stays invisible
+until the highlight drifts apart mid-verse.
 
 ```ts
-"الحمد ۖ لله".split(/\s+/);  // → ["الحمد", "ۖ", "لله"]   nach Strip: ["الحمد", "", "لله"]
+"الحمد ۖ لله".split(/\s+/);  // → ["الحمد", "ۖ", "لله"]   after strip: ["الحمد", "", "لله"]
 tokenize("الحمد ۖ لله");      // → ["الحمد", "لله"]
 ```
 
-## Abdeckung
+## Coverage
 
-| Kategorie | Beispiel | Ergebnis |
+| Category | Example | Result |
 |---|---|---|
-| Vokalzeichen | `بِسْمِ` | `بسم` |
-| Koranische Marker | `الحمدۖ` | `الحمد` |
+| Harakat | `بِسْمِ` | `بسم` |
+| Quranic marks | `الحمدۖ` | `الحمد` |
 | Farsi/Urdu Yeh | `ی ى ے` | `ي` |
 | Keheh / Swash Kaf | `ک ڪ` | `ك` |
 | Urdu Heh | `ہ ۃ` | `ه` |
-| Alef-Varianten | `آ أ إ ٱ` | `ا` |
-| Hamza-Träger | `ؤ ئ` | `و ي` |
+| Alef variants | `آ أ إ ٱ` | `ا` |
+| Hamza carriers | `ؤ ئ` | `و ي` |
 | Teh Marbuta | `ة` | `ه` |
 | Tatweel | `كــتــاب` | `كتاب` |
-| Ziffern | `٢٠٢٦ ۲۰۲۶` | `2026` |
+| Digits | `٢٠٢٦ ۲۰۲۶` | `2026` |
 
-## Reihenfolge der Schritte
+## Order of the steps
 
-Bewusst festgelegt und nicht beliebig:
+Deliberate, not arbitrary:
 
-1. **NFC**: Unicode-Komposition vereinheitlichen
-2. **Marker entfernen**: koranische Zeichen, dann Vokalzeichen, dann Tatweel
-3. **Buchstaben abbilden**: regionale Varianten
-4. **Ziffern**, dann **Leerraum**
+1. **NFC**: unify Unicode composition
+2. **Strip marks**: Quranic marks, then harakat, then tatweel
+3. **Map letters**: regional variants
+4. **Digits**, then **whitespace**
 
-Andersherum überleben Kombinationen, die nach dem Buchstaben-Mapping nicht mehr
-als Kombination erkennbar wären.
+The other way round, combinations survive that would no longer be recognisable
+as combinations after the letter mapping.
 
-## Entwicklung
+## Development
 
 ```bash
 npm install
-npm test        # 25 Tests
+npm test        # 23 tests
 npm run typecheck
 npm run build
 ```
 
-## Lizenz
+## Licence
 
 MIT © Domenic Moran

@@ -1,46 +1,46 @@
 /**
- * Normalisierung arabischer Schrift für den *Vergleich*: nicht für die Anzeige.
+ * Normalise Arabic script for *comparison*, not for display.
  *
- * Der Anlass: Spracherkennung auf klassisch-arabischem Text. Ein Modell gibt
- * `ی` (Farsi Yeh) aus, die Vorlage enthält `ي` (Arabic Yeh). Für das Ohr
- * identisch, für `===` zwei verschiedene Zeichen: und die Trefferquote bricht
- * ein, obwohl korrekt gesprochen wurde.
+ * The occasion: speech recognition on classical Arabic text. A model returns
+ * `ی` (Farsi Yeh) where the source has `ي` (Arabic Yeh). Identical to the ear,
+ * two different characters to `===` — and the match rate collapses although
+ * the speaker was right.
  *
- * Diese Bibliothek räumt genau solche Unterschiede weg, und zwar in Stufen,
- * damit man selbst entscheidet, wie weit die Gleichmacherei gehen darf.
+ * This library clears exactly those differences away, in stages, so the caller
+ * decides how far the levelling is allowed to go.
  */
 
-/** Kombinierende Zeichen: Fatha, Damma, Kasra, Schadda, Sukun, Tanwin, Dagger-Alif. */
+/** Combining marks: fatha, damma, kasra, shadda, sukun, tanwin, dagger alif. */
 const HARAKAT = /[ً-ْٰٓ-ٕـ]/g;
 
-/** Koranische Rezitationszeichen und Waqf-Marker (U+06D6–U+06ED). */
+/** Quranic recitation marks and waqf markers (U+06D6–U+06ED). */
 const QURANIC_MARKS = /[ۖ-ۭ]/g;
 
-/** Zeichenweise Vereinheitlichung regionaler Varianten auf die arabische Form. */
+/** Per-character unification of regional variants onto the Arabic form. */
 const LETTER_MAP: Record<string, string> = {
-  // Yeh: Farsi/Urdu → Arabisch
+  // Yeh: Farsi/Urdu -> Arabic
   "ی": "ي", // ی Farsi Yeh
   "ى": "ي", // ى Alef Maksura
   "ے": "ي", // ے Yeh Barree
-  // Kaf: Farsi/Urdu → Arabisch
+  // Kaf: Farsi/Urdu -> Arabic
   "ک": "ك", // ک Keheh
   "ڪ": "ك", // ڪ Swash Kaf
-  // Heh: Urdu → Arabisch
+  // Heh: Urdu -> Arabic
   "ہ": "ه", // ہ Heh Goal
   "ۃ": "ه", // ۃ Teh Marbuta Goal
-  // Alef mit Hamza/Madda → schlichtes Alef
+  // Alef with hamza/madda -> plain alef
   "آ": "ا", // آ
   "أ": "ا", // أ
   "إ": "ا", // إ
   "ٱ": "ا", // ٱ Wasla
-  // Hamza-Träger
+  // Hamza carriers
   "ؤ": "و", // ؤ
   "ئ": "ي", // ئ
-  // Teh Marbuta → Heh (wird am Wortende oft gleich gesprochen)
+  // Teh marbuta -> heh (often spoken the same way at the end of a word)
   "ة": "ه", // ة
 };
 
-/** Arabisch-indische und erweiterte Ziffern → ASCII. */
+/** Arabic-Indic and extended Arabic-Indic digits -> ASCII. */
 const DIGIT_OFFSETS: [number, number][] = [
   [0x0660, 0x0669], // ٠-٩
   [0x06f0, 0x06f9], // ۰-۹
@@ -49,15 +49,15 @@ const DIGIT_OFFSETS: [number, number][] = [
 const TATWEEL = /ـ/g;
 
 export type NormalizeOptions = {
-  /** Vokalzeichen entfernen. Standard: true. */
+  /** Remove vowel marks. Default: true. */
   stripHarakat?: boolean;
-  /** Koranische Rezitations- und Pausenzeichen entfernen. Standard: true. */
+  /** Remove Quranic recitation and pause marks. Default: true. */
   stripQuranicMarks?: boolean;
-  /** Regionale Buchstabenvarianten vereinheitlichen. Standard: true. */
+  /** Unify regional letter variants. Default: true. */
   unifyLetters?: boolean;
-  /** Arabisch-indische Ziffern nach ASCII wandeln. Standard: true. */
+  /** Convert Arabic-Indic digits to ASCII. Default: true. */
   normalizeDigits?: boolean;
-  /** Mehrfache Leerzeichen zusammenfassen und trimmen. Standard: true. */
+  /** Collapse runs of whitespace and trim. Default: true. */
   collapseWhitespace?: boolean;
 };
 
@@ -80,11 +80,11 @@ function mapDigits(input: string): string {
 }
 
 /**
- * Normalisiert arabischen Text für den Vergleich.
+ * Normalises Arabic text for comparison.
  *
- * Die Reihenfolge ist bewusst: erst Unicode-Komposition vereinheitlichen (NFC),
- * dann Marker entfernen, dann Buchstaben abbilden. Andersherum überleben
- * Kombinationen, die nach dem Mapping nicht mehr erkannt würden.
+ * The order is deliberate: unify Unicode composition first (NFC), then strip
+ * marks, then map letters. The other way round, combinations survive that
+ * would no longer be recognised after the mapping.
  */
 export function normalizeArabic(input: string, options: NormalizeOptions = {}): string {
   const opts = { ...DEFAULTS, ...options };
@@ -104,12 +104,13 @@ export function normalizeArabic(input: string, options: NormalizeOptions = {}): 
 }
 
 /**
- * Zerlegt normalisierten Text in Wörter.
+ * Splits normalised text into words.
  *
- * Wichtig gegenüber `split(/\s+/)`: Zeichen, die *allein* stehen (etwa
- * Waqf-Marker in manchen Uthmani-Ausgaben), werden nach der Normalisierung zu
- * leeren Zeichenketten. Bleiben die im Array, verschiebt sich jeder folgende
- * Wortindex: und damit zum Beispiel jede Wort-Zeitmarke einer Audiospur.
+ * What this does that `split(/\s+/)` does not: characters that stand *alone*
+ * (waqf markers in some Uthmani editions, for instance) become empty strings
+ * after normalisation. Left in the array, they shift every following word
+ * index — and with it, for example, every word-level timestamp of an audio
+ * track.
  */
 export function tokenize(input: string, options?: NormalizeOptions): string[] {
   return normalizeArabic(input, options)
@@ -118,12 +119,12 @@ export function tokenize(input: string, options?: NormalizeOptions): string[] {
 }
 
 /**
- * Ähnlichkeit zweier Texte zwischen 0 und 1, auf Wortebene.
+ * Similarity of two texts between 0 and 1, at word level.
  *
- * Bewusst mild: Verglichen wird über die Levenshtein-Distanz der Wortfolgen,
- * nicht über exakte Gleichheit. Ein einzelnes abweichendes Wort in einem langen
- * Vers soll das Ergebnis nicht auf null ziehen: bei Rezitationsprüfung ist ein
- * strenger Vergleich für Lernende unbrauchbar.
+ * Deliberately lenient: it compares the Levenshtein distance of the word
+ * sequences, not exact equality. A single differing word in a long verse must
+ * not drag the result to zero — in a recitation check a strict comparison is
+ * useless to a learner.
  */
 export function similarity(a: string, b: string, options?: NormalizeOptions): number {
   const left = tokenize(a, options);
@@ -132,7 +133,7 @@ export function similarity(a: string, b: string, options?: NormalizeOptions): nu
   if (left.length === 0 && right.length === 0) return 1;
   if (left.length === 0 || right.length === 0) return 0;
 
-  // Zeilenweise Levenshtein: nur zwei Zeilen im Speicher.
+  // Row-wise Levenshtein: only two rows are ever held in memory.
   let prev = Array.from({ length: right.length + 1 }, (_, i) => i);
   let curr = new Array<number>(right.length + 1);
 
@@ -149,7 +150,7 @@ export function similarity(a: string, b: string, options?: NormalizeOptions): nu
   return 1 - distance / Math.max(left.length, right.length);
 }
 
-/** True, wenn beide Texte nach der Normalisierung identisch sind. */
+/** True when both texts are identical after normalisation. */
 export function equals(a: string, b: string, options?: NormalizeOptions): boolean {
   return normalizeArabic(a, options) === normalizeArabic(b, options);
 }
