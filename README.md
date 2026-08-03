@@ -3,6 +3,7 @@
 **Normalise Arabic script for comparison, not for display.**
 
 [![CI](https://github.com/DomenicMoran/arabic-normalize/actions/workflows/ci.yml/badge.svg)](https://github.com/DomenicMoran/arabic-normalize/actions/workflows/ci.yml)
+[![npm](https://img.shields.io/npm/v/arabic-normalize)](https://www.npmjs.com/package/arabic-normalize)
 ![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178c6)
 ![Dependencies](https://img.shields.io/badge/dependencies-0-success)
 
